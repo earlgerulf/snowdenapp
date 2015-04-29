@@ -1,4 +1,4 @@
-angular.module('starter.controllers', ['starter.factories'])
+angular.module('starter.controllers', ['starter.services'])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
   // Form data for the login modal
