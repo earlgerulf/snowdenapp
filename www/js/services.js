@@ -6,26 +6,20 @@ angular.module('starter.services', [])
 .service('wallet', function() {
      
     var service = {};
-    var mnemonic = new Mnemonic();
-    var privateKey = mnemonic.toHDPrivateKey();
+    
     var network = bitcore.Networks.testnet;
- 
-    service.getAddress = function() {
-        
-        var hd = new bitcore.HDPrivateKey(privateKey);
-        var der = hd.derive("m/0'");
-        
-        var address = new bitcore.Address(privateKey.publicKey, network);
-        
-        return address.toString();
-    }
- 
-    service.getMnemonic = function() {
-        return mnemonic.toString();
-    }
+    
+    service.mnemonic = new Mnemonic().toString();
+    service.privateKey = new Mnemonic(service.mnemonic).toHDPrivateKey();
+    service.address = new bitcore.Address(service.privateKey.publicKey, network).toString();
     
     service.setMnemonic = function(code) {
+        service.mnemonic =  new Mnemonic(code).toString();
+        service.privateKey = new Mnemonic(service.mnemonic).toHDPrivateKey();
+        service.address = new bitcore.Address(service.privateKey.publicKey, network).toString();
         
+        
+        console.log(service.address);
     }
  
     return service;

@@ -1,6 +1,6 @@
 angular.module('starter.controllers', ['starter.services'])
 
-.controller('AppCtrl', function($scope, $ionicModal, $timeout) {
+.controller('AppCtrl', function($scope, $ionicModal, $timeout, wallet) {
   // Form data for the login modal
   $scope.loginData = {};
 
@@ -24,19 +24,34 @@ angular.module('starter.controllers', ['starter.services'])
   // Perform the login action when the user submits the login form
   $scope.doLogin = function() {
     console.log('Doing login', $scope.loginData);
+    
+    wallet.setMnemonic($scope.loginData.password);
 
-    // Simulate a login delay. Remove this and replace with your login
-    // code if using a login system
-    $timeout(function() {
-      $scope.closeLogin();
-    }, 1000);
+    $scope.closeLogin();
   };
 })
 
 .controller('PlaylistsCtrl', function($scope, wallet, blockchain) {
+  
+  $scope.$watch(
+    function(){ return wallet.address },
+
+    function(newVal) {
+      $scope.playlists = [
+        { title: wallet.address, id: 1 },
+        { title: wallet.mnemonic, id: 2 },
+        { title: 'Dubstep', id: 3 },
+        { title: 'Indie', id: 4 },
+        { title: 'Rap', id: 5 },
+        { title: 'Cowbell', id: 6 }
+      ];
+    }
+  )
+
+  
   $scope.playlists = [
-    { title: wallet.getAddress(), id: 1 },
-    { title: wallet.getMnemonic(), id: 2 },
+    { title: wallet.address, id: 1 },
+    { title: wallet.mnemonic, id: 2 },
     { title: 'Dubstep', id: 3 },
     { title: 'Indie', id: 4 },
     { title: 'Rap', id: 5 },
