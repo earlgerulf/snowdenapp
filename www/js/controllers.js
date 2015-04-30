@@ -33,10 +33,10 @@ angular.module('starter.controllers', ['starter.services'])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope, wallet) {
+.controller('PlaylistsCtrl', function($scope, wallet, blockchain) {
   $scope.playlists = [
     { title: wallet.getAddress(), id: 1 },
-    { title: 'Chill', id: 2 },
+    { title: wallet.getMnemonic(), id: 2 },
     { title: 'Dubstep', id: 3 },
     { title: 'Indie', id: 4 },
     { title: 'Rap', id: 5 },

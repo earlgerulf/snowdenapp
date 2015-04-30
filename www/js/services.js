@@ -1,15 +1,49 @@
 var bitcore = require('bitcore');
+var Mnemonic = require('bitcore-mnemonic');
 
 angular.module('starter.services', [])
 
-.factory('wallet', function() {
+.service('wallet', function() {
      
-    var factory = {};
-    var privateKey = new bitcore.PrivateKey();
+    var service = {};
+    var mnemonic = new Mnemonic();
+    var privateKey = mnemonic.toHDPrivateKey();
+    var network = bitcore.Networks.testnet;
  
-    factory.getAddress = function() {
-        return privateKey.toString();
+    service.getAddress = function() {
+        
+        var hd = new bitcore.HDPrivateKey(privateKey);
+        var der = hd.derive("m/0'");
+        
+        var address = new bitcore.Address(privateKey.publicKey, network);
+        
+        return address.toString();
     }
  
-    return factory;
+    service.getMnemonic = function() {
+        return mnemonic.toString();
+    }
+    
+    service.setMnemonic = function(code) {
+        
+    }
+ 
+    return service;
+})
+
+.service('blockchain', function($http) {
+     
+    var service = {};
+ 
+    service.getBalance = function(address) {
+        
+        $http.get('https://blockchain.info/q/getreceivedbyaddress/' + address + '?cors=true')
+        .then(function (response) {
+            var data = response.data;
+            console.log(data);
+            return data;
+        }); 
+    }
+ 
+    return service;
 });
