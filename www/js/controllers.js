@@ -35,12 +35,12 @@ angular.module('starter.controllers', ['starter.services'])
 .controller('ContactlistsCtrl', function($scope) {
   
   $scope.contacts = [
-    { address: 'mgDLbirZsaZ8jRTfPYW6Vv5z4KkizqzCLx' },
-    { address: 'mqdfWTbyZGHANkidLijPjR4La63X49DJxT' }
+    { address: '033d10793cb5406696d823e6d181c5b02dc332d9885b5bf1b1a1172e0919d31240' },
+    { address: '025cfdc6d176bb4b5448c2273db7d2444d7c35d6636c057b15448ef0a1a3e37964' }
   ];
 })
 
-.controller('ContactlistCtrl', function($scope, $stateParams) {
+.controller('ContactlistCtrl', function($scope, $stateParams, ecies, wallet) {
   
   $scope.messages = [
     { text: 'Hello' },
@@ -50,9 +50,12 @@ angular.module('starter.controllers', ['starter.services'])
   $scope.message = { text: "" };
   
   $scope.addMessage = function(message) {
-    $scope.messages.push({text: message});
     //we reset the text input field to an empty string
     $scope.message = { text: "" };
+    
+    var msg = ecies.encrypt(message, wallet.getPublicKey(), wallet.getPrivateKey());
+    
+    $scope.messages.push({text: msg});
   };
 })
 
