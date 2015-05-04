@@ -60,4 +60,29 @@ angular.module('starter.controllers', ['starter.services'])
 })
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {
+})
+
+
+.controller('ContactlistsCtrl', function($scope) {
+  
+  $scope.contacts = [
+    { address: 'mgDLbirZsaZ8jRTfPYW6Vv5z4KkizqzCLx' },
+    { address: 'mqdfWTbyZGHANkidLijPjR4La63X49DJxT' }
+  ];
+})
+
+.controller('ContactlistCtrl', function($scope, $stateParams) {
+  
+  $scope.messages = [
+    { text: 'Hello' },
+    { text: 'Hi' }
+  ];
+  
+  $scope.message = { text: "" };
+  
+  $scope.addMessage = function(message) {
+    $scope.messages.push({text: message});
+    //we reset the text input field to an empty string
+    $scope.message = { text: "" };
+  };
 });

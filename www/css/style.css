@@ -1,1 +1,18 @@
-/* Empty. Add your own CSS if you like */
+.chatbox {
+    position:absolute;
+    bottom: 0px;
+}
+.message-input {
+    margin-top: 10px;
+}
+
+.chatbox-container {
+    font-size: 1.2rem;
+    color: rgba(0,0,0,0.8);
+    position:relative;
+    height: 200px;
+    border: 1px solid rgba(0,0,255, 0.2);
+    padding: 10px;
+    line-height: 29px;
+    overflow: hidden;
+}
