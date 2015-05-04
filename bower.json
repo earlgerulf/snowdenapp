@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "bitcore-mnemonic": "~0.11.0",
-    "bitcore": "~0.12.2"
+    "bitcore": "~0.12.2",
+    "angularLocalStorage": "~0.3.0"
   }
 }
