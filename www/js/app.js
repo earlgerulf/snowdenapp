@@ -39,11 +39,12 @@ angular.module('starter', ['ionic', 'starter.controllers', 'angularLocalStorage'
     }
   })
 
-  .state('app.browse', {
-    url: "/browse",
+  .state('app.balance', {
+    url: "/balance",
     views: {
       'menuContent': {
-        templateUrl: "templates/browse.html"
+        templateUrl: "templates/balance.html",
+          controller: 'BalanceCtrl'
       }
     }
   })

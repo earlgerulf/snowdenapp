@@ -85,4 +85,17 @@ angular.module('starter.controllers', ['starter.services'])
     //we reset the text input field to an empty string
     $scope.message = { text: "" };
   };
+})
+
+.controller('BalanceCtrl', function($scope, $http, wallet) {
+  
+  $scope.address = wallet.address;
+  $scope.balance = 0;
+  
+  $http.get('https://api.chain.com/v2/testnet3/addresses/' +$scope.address 
+    + '?api-key-id=DEMO-4a5e1e4')
+  .then(function (response) {
+      var data = response.data;
+      $scope.balance = data[0].confirmed.balance;
+  }); 
 });

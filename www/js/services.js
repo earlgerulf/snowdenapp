@@ -25,25 +25,6 @@ angular.module('starter.services', [])
         service.address = new bitcore.Address(service.privateKey.publicKey, network).toString();
         
         storage.set('mnemonic', service.mnemonic);
-        
-        console.log(service.address);
-    }
- 
-    return service;
-})
-
-.service('blockchain', function($http) {
-     
-    var service = {};
- 
-    service.getBalance = function(address) {
-        
-        $http.get('https://blockchain.info/q/getreceivedbyaddress/' + address + '?cors=true')
-        .then(function (response) {
-            var data = response.data;
-            console.log(data);
-            return data;
-        }); 
     }
  
     return service;
