@@ -31,37 +31,6 @@ angular.module('starter.controllers', ['starter.services'])
   };
 })
 
-.controller('PlaylistsCtrl', function($scope, wallet, blockchain) {
-  
-  $scope.$watch(
-    function(){ return wallet.address },
-
-    function(newVal) {
-      $scope.playlists = [
-        { title: wallet.address, id: 1 },
-        { title: wallet.mnemonic, id: 2 },
-        { title: 'Dubstep', id: 3 },
-        { title: 'Indie', id: 4 },
-        { title: 'Rap', id: 5 },
-        { title: 'Cowbell', id: 6 }
-      ];
-    }
-  )
-
-  
-  $scope.playlists = [
-    { title: wallet.address, id: 1 },
-    { title: wallet.mnemonic, id: 2 },
-    { title: 'Dubstep', id: 3 },
-    { title: 'Indie', id: 4 },
-    { title: 'Rap', id: 5 },
-    { title: 'Cowbell', id: 6 }
-  ];
-})
-
-.controller('PlaylistCtrl', function($scope, $stateParams) {
-})
-
 
 .controller('ContactlistsCtrl', function($scope) {
   
