@@ -47,6 +47,18 @@ angular.module('starter.controllers', ['starter.services'])
     { text: 'Hi' }
   ];
   
+  // Listen to all TX's
+  var socket = io("https://test-insight.bitpay.com");
+  socket.on('connect', function() {
+    // Join the room.
+    socket.emit('subscribe', 'inv');
+  })
+  socket.on('tx', function(data) {
+    console.log("New transaction received: " + data.txid);
+    $scope.messages.push({text: data.txid});
+    $scope.$apply();
+  })
+  
   $scope.message = { text: "" };
   
   $scope.addMessage = function(message) {
