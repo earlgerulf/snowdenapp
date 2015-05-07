@@ -40,7 +40,7 @@ angular.module('starter.controllers', ['starter.services'])
   ];
 })
 
-.controller('ContactlistCtrl', function($scope, $stateParams, ecies, wallet) {
+.controller('ContactlistCtrl', function($scope, $http, $stateParams, ecies, wallet) {
   
   $scope.messages = [
     { text: 'Hello' },
@@ -48,7 +48,7 @@ angular.module('starter.controllers', ['starter.services'])
   ];
   
   // Listen to all TX's
-  var socket = io("https://test-insight.bitpay.com");
+  /*var socket = io("https://test-insight.bitpay.com");
   socket.on('connect', function() {
     // Join the room.
     socket.emit('subscribe', 'inv');
@@ -57,7 +57,7 @@ angular.module('starter.controllers', ['starter.services'])
     console.log("New transaction received: " + data.txid);
     $scope.messages.push({text: data.txid});
     $scope.$apply();
-  })
+  })*/
   
   $scope.message = { text: "" };
   
@@ -68,6 +68,12 @@ angular.module('starter.controllers', ['starter.services'])
     var msg = ecies.encrypt(message, wallet.getPublicKey(), wallet.getPrivateKey());
     
     $scope.messages.push({text: msg});
+    
+    $http.get('https://api.chain.com/v2/testnet3/addresses/' + wallet.address
+      + '/unspents?api-key-id=DEMO-4a5e1e4')
+    .then(function (response) {
+      var tx = wallet.createTXFromData(msg, response.data);
+    }); 
   };
 })
 
@@ -76,7 +82,7 @@ angular.module('starter.controllers', ['starter.services'])
   $scope.address = wallet.address;
   $scope.balance = 0;
   
-  $http.get('https://api.chain.com/v2/testnet3/addresses/' +$scope.address 
+  $http.get('https://api.chain.com/v2/testnet3/addresses/' + $scope.address 
     + '?api-key-id=DEMO-4a5e1e4')
   .then(function (response) {
       var data = response.data;
