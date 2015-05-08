@@ -48,16 +48,23 @@ angular.module('starter.controllers', ['starter.services'])
   ];
   
   // Listen to all TX's
-  /*var socket = io("https://test-insight.bitpay.com");
+  var socket = io("https://test-insight.bitpay.com");
   socket.on('connect', function() {
     // Join the room.
     socket.emit('subscribe', 'inv');
   })
   socket.on('tx', function(data) {
-    console.log("New transaction received: " + data.txid);
-    $scope.messages.push({text: data.txid});
+    console.log("New transaction received: " + JSON.stringify(data));
+    
+    var encrypted = wallet.getDataFromInsightTX(data);
+    
+    console.log(encrypted);
+      
+    var msg = ecies.decrypt(encrypted, wallet.getPublicKey(), wallet.getPrivateKey());
+    $scope.messages.push({text: msg});
+    //$scope.messages.push({text: data.txid});
     $scope.$apply();
-  })*/
+  })
   
   $scope.message = { text: "" };
   
@@ -67,13 +74,24 @@ angular.module('starter.controllers', ['starter.services'])
     
     var msg = ecies.encrypt(message, wallet.getPublicKey(), wallet.getPrivateKey());
     
-    $scope.messages.push({text: msg});
-    
     $http.get('https://api.chain.com/v2/testnet3/addresses/' + wallet.address
       + '/unspents?api-key-id=DEMO-4a5e1e4')
     .then(function (response) {
-      var tx = wallet.createTXFromData(msg, response.data);
-    }); 
+      
+      var txHex = wallet.createTXFromData(msg, response.data);
+      
+      var dataObj = {
+				signed_hex : txHex
+		  };	
+		  var res = $http.post('https://api.chain.com/v2/testnet3/transactions/send?api-key-id=DEMO-4a5e1e4', dataObj);
+  		res.success(function(data, status, headers, config) {
+  			console.log(data.transaction_hash);
+  		});
+  		res.error(function(data, status, headers, config) {
+  			console.log("Some error");
+  		});
+    });
+    
   };
 })
 
