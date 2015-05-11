@@ -74,16 +74,17 @@ angular.module('snowden.controllers', ['snowden.services'])
     
     var msg = ecies.encrypt(message, wallet.getPublicKey(), wallet.getPrivateKey());
     
-    $http.get('https://api.chain.com/v2/testnet3/addresses/' + wallet.address
-      + '/unspents?api-key-id=DEMO-4a5e1e4')
+    $http.get('https://test-insight.bitpay.com/api/addr/' + wallet.address
+      + '/utxo')
     .then(function (response) {
       
       var txHex = wallet.createTXFromData(msg, response.data);
       
       var dataObj = {
-				signed_hex : txHex
+				rawtx : txHex
 		  };	
-		  var res = $http.post('https://api.chain.com/v2/testnet3/transactions/send?api-key-id=DEMO-4a5e1e4', dataObj);
+		  
+		  var res = $http.post('https://test-insight.bitpay.com/api/tx/send', dataObj);
   		res.success(function(data, status, headers, config) {
   			console.log(data.transaction_hash);
   		});

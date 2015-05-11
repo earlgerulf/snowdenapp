@@ -73,12 +73,7 @@ angular.module('snowden.services', [])
       var tx = new bitcore.Transaction();
       
       for(var i = 0; i < utxos.length; i++) {
-        
-        tx.from({'txid': utxos[i].transaction_hash, 
-          vout: utxos[i].output_index, 
-          satoshis: utxos[i].value, 
-          scriptPubKey: utxos[i].script_hex});
-          
+        tx.from(utxos[i]);
       }
       
       for(var i = 0; i < buffs.length; i++) {
