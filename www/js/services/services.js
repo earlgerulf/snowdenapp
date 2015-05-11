@@ -3,7 +3,7 @@ var Mnemonic = require('bitcore-mnemonic');
 var ECIES = require('bitcore-ecies');
 var Buffer = bitcore.deps.Buffer;
 
-angular.module('starter.services', [])
+angular.module('snowden.services', [])
 
 .service('wallet', function(storage) {
      

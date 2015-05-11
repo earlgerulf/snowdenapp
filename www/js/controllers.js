@@ -1,4 +1,4 @@
-angular.module('starter.controllers', ['starter.services'])
+angular.module('snowden.controllers', ['snowden.services'])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout, wallet) {
   // Form data for the login modal
@@ -47,6 +47,8 @@ angular.module('starter.controllers', ['starter.services'])
     { text: 'Hi' }
   ];
   
+  $scope.message = { text: "" };
+  
   // Listen to all TX's
   var socket = io("https://test-insight.bitpay.com");
   socket.on('connect', function() {
@@ -65,8 +67,6 @@ angular.module('starter.controllers', ['starter.services'])
     //$scope.messages.push({text: data.txid});
     $scope.$apply();
   })
-  
-  $scope.message = { text: "" };
   
   $scope.addMessage = function(message) {
     //we reset the text input field to an empty string
