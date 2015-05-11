@@ -100,10 +100,9 @@ angular.module('snowden.controllers', ['snowden.services'])
   $scope.address = wallet.address;
   $scope.balance = 0;
   
-  $http.get('https://api.chain.com/v2/testnet3/addresses/' + $scope.address 
-    + '?api-key-id=DEMO-4a5e1e4')
+  $http.get('https://test-insight.bitpay.com/api/addr/' + $scope.address)
   .then(function (response) {
       var data = response.data;
-      $scope.balance = data[0].confirmed.balance;
+      $scope.balance = data.balanceSat;
   }); 
 });
