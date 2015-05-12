@@ -35,17 +35,16 @@ angular.module('snowden.controllers', ['snowden.services'])
 .controller('ContactlistsCtrl', function($scope) {
   
   $scope.contacts = [
-    { address: '033d10793cb5406696d823e6d181c5b02dc332d9885b5bf1b1a1172e0919d31240' },
-    { address: '025cfdc6d176bb4b5448c2273db7d2444d7c35d6636c057b15448ef0a1a3e37964' }
+    { address: '033d10793cb5406696d823e6d181c5b02dc332d9885b5bf1b1a1172e0919d31240',
+      porn_name: 'Jocelyn Xero' },
+    { address: '025cfdc6d176bb4b5448c2273db7d2444d7c35d6636c057b15448ef0a1a3e37964',
+      porn_name: 'Gibson Zelda' }
   ];
 })
 
-.controller('ContactlistCtrl', function($scope, $http, $stateParams, ecies, wallet) {
+.controller('ContactlistCtrl', function($scope, $http, $stateParams, ecies, wallet, messages) {
   
-  $scope.messages = [
-    { text: 'Hello' },
-    { text: 'Hi' }
-  ];
+  $scope.messages = messages.getMessages($stateParams.contactId);
   
   $scope.message = { text: "" };
   
@@ -63,7 +62,11 @@ angular.module('snowden.controllers', ['snowden.services'])
     console.log(encrypted);
       
     var msg = ecies.decrypt(encrypted, wallet.getPublicKey(), wallet.getPrivateKey());
-    $scope.messages.push({text: msg});
+    
+    // TODO - Figure out who it is from somehow
+    messages.addMessage('025cfdc6d176bb4b5448c2273db7d2444d7c35d6636c057b15448ef0a1a3e37964',
+      msg);
+    //$scope.messages.push({text: msg});
     //$scope.messages.push({text: data.txid});
     $scope.$apply();
   })
@@ -72,7 +75,8 @@ angular.module('snowden.controllers', ['snowden.services'])
     //we reset the text input field to an empty string
     $scope.message = { text: "" };
     
-    var msg = ecies.encrypt(message, wallet.getPublicKey(), wallet.getPrivateKey());
+    var msg = ecies.encrypt(message, wallet.toPublicKey($stateParams.contactId), 
+      wallet.getPrivateKey());
     
     $http.get('https://test-insight.bitpay.com/api/addr/' + wallet.address
       + '/utxo')
@@ -86,7 +90,7 @@ angular.module('snowden.controllers', ['snowden.services'])
 		  
 		  var res = $http.post('https://test-insight.bitpay.com/api/tx/send', dataObj);
   		res.success(function(data, status, headers, config) {
-  			console.log(data.transaction_hash);
+  			console.log(data.txid);
   		});
   		res.error(function(data, status, headers, config) {
   			console.log("Some error");
