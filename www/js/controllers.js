@@ -44,7 +44,11 @@ angular.module('snowden.controllers', ['snowden.services'])
 
 .controller('ContactlistCtrl', function($scope, $http, $stateParams, ecies, wallet, messages) {
   
-  $scope.messages = messages.getMessages($stateParams.contactId);
+  var pubKey = wallet.toPublicKeyHashString($stateParams.contactId);
+  
+  console.log(pubKey);
+  
+  $scope.messages = messages.getMessages(pubKey);
   
   $scope.message = { text: "" };
   
@@ -63,11 +67,7 @@ angular.module('snowden.controllers', ['snowden.services'])
       
     var msg = ecies.decrypt(encrypted, wallet.getPublicKey(), wallet.getPrivateKey());
     
-    // TODO - Figure out who it is from somehow
-    messages.addMessage('025cfdc6d176bb4b5448c2273db7d2444d7c35d6636c057b15448ef0a1a3e37964',
-      msg);
-    //$scope.messages.push({text: msg});
-    //$scope.messages.push({text: data.txid});
+    messages.addMessage(wallet.getOriginator(data), msg);
     $scope.$apply();
   })
   

@@ -37,6 +37,12 @@ angular.module('snowden.services', [])
       return new bitcore.PublicKey(from);
     }
     
+    service.toPublicKeyHashString = function(from) {
+      var pk = service.toPublicKey(from);
+      var addr = new bitcore.Address(pk, network);
+      return addr.toString();
+    }
+    
     service.getPrivateKey = function() {
       return service.privateKey.privateKey;
     }
@@ -94,7 +100,15 @@ angular.module('snowden.services', [])
       tx.sign(service.getPrivateKey());
       
       return tx.toBuffer().toString('hex');
-    } 
+    }
+    
+    service.getOriginator = function(txObj) {
+      
+      var change = txObj.vout[txObj.vout.length - 1];
+      var addr = Object.keys(change)[0];
+      
+      return addr;
+    }
     
     service.getDataFromInsightTX = function(txObj) {
       
@@ -132,9 +146,9 @@ angular.module('snowden.services', [])
     var service = {};
     
     var messageCache = {
-      '033d10793cb5406696d823e6d181c5b02dc332d9885b5bf1b1a1172e0919d31240': [
+      'mgDLbirZsaZ8jRTfPYW6Vv5z4KkizqzCLx': [
         { text: 'Hello World'}],
-      '025cfdc6d176bb4b5448c2273db7d2444d7c35d6636c057b15448ef0a1a3e37964': [
+      'mqdfWTbyZGHANkidLijPjR4La63X49DJxT': [
         { text: 'Doe sit work ?'}],
     };
     
