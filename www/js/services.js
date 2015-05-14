@@ -141,30 +141,56 @@ angular.module('snowden.services', [])
     return service;
 })
 
-.service('messages', function(storage) {
+.service('messages', function(storage, wallet, ecies, $rootScope) {
      
-    var service = {};
+  var service = {};
     
-    var messageCache = {
-      'mgDLbirZsaZ8jRTfPYW6Vv5z4KkizqzCLx': [
-        { text: 'Hello World'}],
-      'mqdfWTbyZGHANkidLijPjR4La63X49DJxT': [
-        { text: 'Doe sit work ?'}],
-    };
+  // Listen to all TX's
+  var socket = io("https://test-insight.bitpay.com");
+  socket.on('connect', function() {
+    // Join the room.
+    socket.emit('subscribe', 'inv');
+  })
+  socket.on('tx', function(data) {
+    console.log("New transaction received: " + JSON.stringify(data));
+      
+    try {
     
-    service.addMessage = function(from, message) {
-      if(messageCache[from] == null) {
-        messageCache[from] = [{ text: message }];
-      } else {
-         messageCache[from].push({ text: message });
-      }
+      var encrypted = wallet.getDataFromInsightTX(data);
+      
+      console.log(encrypted);
+        
+      var msg = ecies.decrypt(encrypted, wallet.getPublicKey(), wallet.getPrivateKey());
+      
+      service.addMessage(wallet.getOriginator(data), msg);
+      
+      $rootScope.$apply();
+      
+    }  catch(err) {
+      console.log('Not one of ours.' + err);
     }
+  })
     
-    service.getMessages = function(from) {
-      return messageCache[from];
+  var messageCache = {
+    'mgDLbirZsaZ8jRTfPYW6Vv5z4KkizqzCLx': [
+      { text: 'Hello World'}],
+    'mqdfWTbyZGHANkidLijPjR4La63X49DJxT': [
+      { text: 'Doe sit work ?'}],
+  };
+  
+  service.addMessage = function(from, message) {
+    if(messageCache[from] == null) {
+      messageCache[from] = [{ text: message }];
+    } else {
+       messageCache[from].push({ text: message });
     }
- 
-    return service;
+  }
+  
+  service.getMessages = function(from) {
+    return messageCache[from];
+  }
+
+  return service;
 })
 
 .service('ecies', function(storage) {

@@ -52,25 +52,6 @@ angular.module('snowden.controllers', ['snowden.services'])
   
   $scope.message = { text: "" };
   
-  // Listen to all TX's
-  var socket = io("https://test-insight.bitpay.com");
-  socket.on('connect', function() {
-    // Join the room.
-    socket.emit('subscribe', 'inv');
-  })
-  socket.on('tx', function(data) {
-    console.log("New transaction received: " + JSON.stringify(data));
-    
-    var encrypted = wallet.getDataFromInsightTX(data);
-    
-    console.log(encrypted);
-      
-    var msg = ecies.decrypt(encrypted, wallet.getPublicKey(), wallet.getPrivateKey());
-    
-    messages.addMessage(wallet.getOriginator(data), msg);
-    $scope.$apply();
-  })
-  
   $scope.addMessage = function(message) {
     //we reset the text input field to an empty string
     $scope.message = { text: "" };
