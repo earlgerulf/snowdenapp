@@ -40,14 +40,15 @@ angular.module('snowden.controllers', ['snowden.services'])
     //we reset the text input field to an empty string
     $scope.message = { text: "" };
     
-    var msg = ecies.encrypt(message, wallet.toPublicKey($stateParams.contactId), 
-      wallet.getPrivateKey());
+    var dest =  wallet.toPublicKey($stateParams.contactId);
+    
+    var msg = ecies.encrypt(message, dest, wallet.getPrivateKey());
     
     $http.get('https://test-insight.bitpay.com/api/addr/' + wallet.address
       + '/utxo')
     .then(function (response) {
       
-      var txHex = wallet.createTXFromData(msg, response.data);
+      var txHex = wallet.createTXFromData(msg, response.data, dest);
       
       var dataObj = {
 				rawtx : txHex

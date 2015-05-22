@@ -60,7 +60,7 @@ angular.module('snowden.services', [])
       return addr;
     }
     
-    service.createTXFromData = function(dataString, utxos) {
+    service.createTXFromData = function(dataString, utxos, address) {
       var data = new Buffer(dataString, 'hex');
       
       var buffs = [];
@@ -81,6 +81,9 @@ angular.module('snowden.services', [])
       }
       
       var tx = new bitcore.Transaction();
+      
+      // Flag the destination, later we want to add buckets here.
+      tx.to(address, 1022);
       
       for(var i = 0; i < utxos.length; i++) {
         tx.from(utxos[i]);
