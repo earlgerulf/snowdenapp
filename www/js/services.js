@@ -140,13 +140,49 @@ angular.module('snowden.services', [])
           
       return data.toString('hex');
     }
+    
+    service.getDataFromInsightAddressTX = function(txObj) {
+      
+        
+      var data = new Buffer(0);
+        
+      for(var i = 0; i < txObj.vout.length; i++) {
+        
+        var txOut = txObj.vout[i];
+        
+        var addr = txOut.scriptPubKey.addresses[0];
+        var satoshis = Math.floor(parseFloat(txOut.value) * 100000000);
+        
+        var padding = 0
+        // Is this a data output.
+        if(satoshis == 1000) {
+          data = Buffer.concat([data, service.getDataFromAddress(addr).hashBuffer]);
+        } 
+        
+        if(satoshis > 1000 && satoshis < 1021) {
+          var padding = satoshis - 1000;
+          var hash = service.getDataFromAddress(addr).hashBuffer;
+          var hashWithoutPAdding = hash.slice(0, 20 - padding);
+          data = Buffer.concat([data, hashWithoutPAdding]);
+        }
+      }
+          
+      return data.toString('hex');
+    }
  
     return service;
 })
 
-.service('messages', function(storage, wallet, ecies, $rootScope) {
+.service('messages', function(storage, wallet, ecies, $rootScope, $http) {
      
   var service = {};
+    
+  var messageCache = {
+    'mgDLbirZsaZ8jRTfPYW6Vv5z4KkizqzCLx': [
+      { text: 'Hello World'}],
+    'mqdfWTbyZGHANkidLijPjR4La63X49DJxT': [
+      { text: 'Doe sit work ?'}],
+  };
     
   // Listen to all TX's
   var socket = io("https://test-insight.bitpay.com");
@@ -173,13 +209,41 @@ angular.module('snowden.services', [])
       console.log('Not one of ours.' + err);
     }
   })
+  
+  // Load everything from the blockchain.
+  $http.get('https://test-insight.bitpay.com/api/addr/' + wallet.address)
+  .then(function (response) {
     
-  var messageCache = {
-    'mgDLbirZsaZ8jRTfPYW6Vv5z4KkizqzCLx': [
-      { text: 'Hello World'}],
-    'mqdfWTbyZGHANkidLijPjR4La63X49DJxT': [
-      { text: 'Doe sit work ?'}],
-  };
+    var transactions = response.data['transactions'];
+    
+    if(transactions == null)
+      return;
+    
+    for(var i = transactions.length - 1; i > -1; i--) {
+      $http.get('https://test-insight.bitpay.com/api/tx/' + transactions[i])
+      .then(function (response) {
+        
+        var encrypted = wallet.getDataFromInsightAddressTX(response.data);
+      
+        console.log(encrypted);
+        
+        try {
+          var msg = ecies.decrypt(encrypted, wallet.getPublicKey(), wallet.getPrivateKey());
+          
+          var length = response.data.vout.length;
+          var change = response.data.vout[length - 1].scriptPubKey.addresses[0];
+          
+          service.addMessage(change, msg);
+        } catch(err) {
+          console.log('Could not decrypt. ' + err);
+        }
+        
+      });
+    }
+    
+    
+    $rootScope.$apply();
+  });
   
   service.addMessage = function(from, message) {
     if(messageCache[from] == null) {
