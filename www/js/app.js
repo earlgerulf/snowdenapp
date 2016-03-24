@@ -26,7 +26,7 @@ angular.module('snowden', ['ionic', 'snowden.controllers', 'angularLocalStorage'
   .state('app', {
     url: "/app",
     abstract: true,
-    templateUrl: "templates/menu.html",
+    templateUrl: "www/templates/menu.html",
     controller: 'AppCtrl'
   })
 
@@ -34,7 +34,7 @@ angular.module('snowden', ['ionic', 'snowden.controllers', 'angularLocalStorage'
     url: "/login",
     views: {
       'menuContent': {
-        templateUrl: "templates/login.html",
+        templateUrl: "www/templates/login.html",
           controller: 'AppCtrl'
       }
     }
@@ -44,7 +44,7 @@ angular.module('snowden', ['ionic', 'snowden.controllers', 'angularLocalStorage'
     url: "/balance",
     views: {
       'menuContent': {
-        templateUrl: "templates/balance.html",
+        templateUrl: "www/templates/balance.html",
           controller: 'BalanceCtrl'
       }
     }
@@ -55,7 +55,7 @@ angular.module('snowden', ['ionic', 'snowden.controllers', 'angularLocalStorage'
       url: "/contacts",
       views: {
         'menuContent': {
-          templateUrl: "templates/contacts.html",
+          templateUrl: "www/templates/contacts.html",
           controller: 'ContactlistsCtrl'
         }
       }
@@ -65,7 +65,7 @@ angular.module('snowden', ['ionic', 'snowden.controllers', 'angularLocalStorage'
     url: "/contacts/:contactId",
     views: {
       'menuContent': {
-        templateUrl: "templates/contact.html",
+        templateUrl: "www/templates/contact.html",
         controller: 'ContactlistCtrl'
       }
     }
