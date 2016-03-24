@@ -5,7 +5,7 @@
                 <div class="chatbox-container">
                     <ul class="chatbox">
                         <!-- We output the messages -->
-                        <li ng-repeat="msg in messages">{{msg.text}}</li>
+                        <li ng-repeat="msg in messages">{{msg.name}} - {{msg.text}}</li>
                     </ul>
                 </div>
                 <form name="myform" ng-submit="addMessage(message.text)">

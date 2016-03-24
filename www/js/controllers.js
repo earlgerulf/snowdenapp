@@ -42,6 +42,8 @@ angular.module('snowden.controllers', ['snowden.services'])
     
     var dest =  wallet.toPublicKey($stateParams.contactId);
     
+    message = wallet.privateKey.publicKey.toString() + message;
+    
     var msg = ecies.encrypt(message, dest, wallet.getPrivateKey());
     
     $http.get('https://test-insight.bitpay.com/api/addr/' + wallet.address

@@ -178,10 +178,8 @@ angular.module('snowden.services', [])
   var service = {};
     
   var messageCache = {
-    'mgDLbirZsaZ8jRTfPYW6Vv5z4KkizqzCLx': [
-      { text: 'Hello World'}],
-    'mqdfWTbyZGHANkidLijPjR4La63X49DJxT': [
-      { text: 'Doe sit work ?'}],
+    'mgDLbirZsaZ8jRTfPYW6Vv5z4KkizqzCLx': [],
+    'mqdfWTbyZGHANkidLijPjR4La63X49DJxT': [],
   };
     
   // Listen to all TX's
@@ -201,7 +199,7 @@ angular.module('snowden.services', [])
         
       var msg = ecies.decrypt(encrypted, wallet.getPublicKey(), wallet.getPrivateKey());
       
-      service.addMessage(wallet.getOriginator(data), msg);
+      service.addMessage(wallet.getOriginator(data), msg, false);
       
       $rootScope.$apply();
       
@@ -224,8 +222,6 @@ angular.module('snowden.services', [])
       .then(function (response) {
         
         var encrypted = wallet.getDataFromInsightAddressTX(response.data);
-      
-        console.log(encrypted);
         
         try {
           var msg = ecies.decrypt(encrypted, wallet.getPublicKey(), wallet.getPrivateKey());
@@ -233,7 +229,7 @@ angular.module('snowden.services', [])
           var length = response.data.vout.length;
           var change = response.data.vout[length - 1].scriptPubKey.addresses[0];
           
-          service.addMessage(change, msg);
+          service.addMessage(change, msg, false);
         } catch(err) {
           console.log('Could not decrypt. ' + err);
         }
@@ -241,15 +237,20 @@ angular.module('snowden.services', [])
       });
     }
     
-    
     $rootScope.$apply();
   });
   
-  service.addMessage = function(from, message) {
-    if(messageCache[from] == null) {
-      messageCache[from] = [{ text: message }];
+  service.addMessage = function(contact, message, me) {
+     
+    var name = 'me';
+    if(me == false) {
+      name = 'Other';
+    }
+    
+    if(messageCache[contact] == null) {
+      messageCache[contact] = [{ text: message, name: name }];
     } else {
-       messageCache[from].push({ text: message });
+       messageCache[contact].push({ text: message, name: name });
     }
   }
   
